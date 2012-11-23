@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Make a folder:
+
+# Take screenshot and determine the URLs:
+./urlender.js "$1" urls.txt screenshot.png > urlender-output.log 2>&1
+
+# Download the URLs into a WARC using wget:
+wget -q -i urls.txt -O tempname --warc-file="output"
+rm tempname
+
+# Make it into a bag:
+# bagit.py <foldername>
+
+# Zip it up
+# zip -r <foldername>.zip <foldername>
+
+
