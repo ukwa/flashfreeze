@@ -7,3 +7,7 @@ Utilities to rapidly archive particular web pages and their dependencies.
  * Using PyQT instead on OS X made no difference.
  * http://jeanphix.me/Ghost.py/
 
+
+    python src/flashfreeze/flashfreeze.py "http://news.bbc.co.uk"
+
+
