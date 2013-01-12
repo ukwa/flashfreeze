@@ -26,9 +26,10 @@ def main(argv):
     # Extract a list of resource URLs
     print "Extracting URLs..."
     urls = set()
-    urls.add(target)
     for r in resources:
-        urls.add(r.url)
+        urls.add(str(r.url))
+    if target not in urls:
+        urls.add(target)
 
     # Open pipe to the wget process
     print "Passing URLs to wget..."
