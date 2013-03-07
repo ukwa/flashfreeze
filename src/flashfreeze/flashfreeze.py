@@ -27,7 +27,7 @@ def main(argv):
     print "Extracting URLs..."
     urls = set()
     for r in resources:
-        urls.add(str(r.url))
+        urls.add(str(r.url.toString()))
     if target not in urls:
         urls.add(target)
 
