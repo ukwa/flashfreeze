@@ -2,6 +2,7 @@ from ghost import Ghost
 import sys
 import time
 import subprocess
+import pprint
 
 def main(argv):
     if len(argv) < 2:
@@ -11,28 +12,30 @@ def main(argv):
     target = argv[1]
     warc_name = "flashfrozen"
 
-    print "Starting Ghost.py..."
-    ghost = Ghost(viewport_size=(1280, 1024))
+    print("Starting Ghost.py...")
+    ghost = Ghost(viewport_size=(1280, 1024),wait_timeout=100)
     # ghost = Ghost(viewport_size=(1280, 1024), display=True)
     # ghost.webview.getSettings().setPluginsEnabled(true);
-    print "Loading page:",target
+    print("Loading page:",target)
     page, resources = ghost.open(target)
     #time.sleep(2)
-    print "Taking screenshot..."
+    print("Taking screenshot...")
     ghost.capture_to('original-screenshot.png')
-    print "Shutting down Ghost.py..."
+    print("Shutting down Ghost.py...")
     ghost.exit()
 
     # Extract a list of resource URLs
-    print "Extracting URLs..."
+    print("Extracting URLs...")
     urls = set()
     for r in resources:
-        urls.add(str(r.url.toString()))
+        pprint.pprint(r.url)
+        print(dir(r.url))
+        urls.add(str(r.url))
     if target not in urls:
         urls.add(target)
 
     # Open pipe to the wget process
-    print "Passing URLs to wget..."
+    print("Passing URLs to wget...")
     process = subprocess.Popen(["wget", "-q", 
         "-i", "-", "-O", "-", 
         "--warc-file={}".format(warc_name)]
@@ -41,22 +44,25 @@ def main(argv):
     urlf = open('original-urls.txt','w')
     # Pass in the URLs, via STDIN:
     for u in urls:
+        print("GOT", u)
         urlf.write("{}\n".format(u))
+        #process.stdin.write(bytes("{}\n".format(u),'UTF-8'))
         process.stdin.write("{}\n".format(u))
+        #process.stdin.write(u)
     # Close the URLs file:
     urlf.close()
     # Close STDIN so wget knows there are no more URLs coming:
     process.stdin.flush()
     process.stdin.close()
     # This explicitly churns through and ignores STDOUT:
-    print "Waiting for wget output..."
+    print("Waiting for wget output...")
     for line in process.stdout:
         pass
     # Wait for the process to finish:
-    print "Waiting for wget to finish..."
+    print("Waiting for wget to finish...")
     process.wait()
 
-    print "Done."
+    print("Done.")
 
 
 if __name__ == "__main__":
